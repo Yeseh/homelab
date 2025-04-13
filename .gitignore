@@ -1,0 +1,5 @@
+bootstrap/config
+bootstrap/tfplan
+bootstrap/.terraform
+
+*.secret.*
