@@ -14,4 +14,3 @@ stop:
 
 start:
     az aks start --name {{clusterName}} --resource-group {{resourceGroup}}
-    
