@@ -18,11 +18,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     defaults:
-      shell: bash
-      working-directory: apps/simple-api
-    timeout-minutes: 420
+      run:
+        working-directory: apps/simple-api
+    timeout-minutes: 30 
     steps:
-      - uses: actions/Checkout@v4
+      - uses: actions/checkout@v4
       # install zig
       - uses: mlugg/setup-zig@v1
 
