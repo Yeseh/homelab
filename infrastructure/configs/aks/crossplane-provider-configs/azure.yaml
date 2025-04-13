@@ -1,0 +1,11 @@
+apiVersion: azure.upbound.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: azure-default
+spec:
+  # Patched with Kustomize
+  clientID: ${kubeletIdentityClientId}
+  credentials:
+    source: UserAssignedManagedIdentity
+  subscriptionID: ${platformSubscriptionId}
+  tenantID: ${platformTenantId}

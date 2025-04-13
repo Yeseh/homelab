@@ -1,0 +1,26 @@
+apiVersion: apiextensions.crossplane.io/v1alpha1
+kind: EnvironmentConfig
+metadata:
+  name: global-platform-environment
+data:
+  global:
+    tenantId: ${platformTenantId}
+    platformSubscriptionId: ${platformSubscriptionId}
+    locations:
+      weu: Europe West 
+      neu: Europe North 
+    shortLocations:
+      Europe West: weu 
+      Europe North: neu 
+    environments:
+      dev: dev
+      tst: test 
+      acc: acceptance 
+      prd: prod
+      nprd: nonprod
+    shortEnvironments:
+      dev: dev
+      test: tst 
+      acceptance: acc 
+      prod: prd
+      nonprod: nprd

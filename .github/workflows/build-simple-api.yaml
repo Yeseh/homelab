@@ -3,7 +3,7 @@ on:
   pull_request:
   push:
     paths:
-      - apps/simple-api/**
+      - src/simple-api/**
       - .github/workflows/build-simple-api.yaml
     branches:
       - main 
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: apps/simple-api
+        working-directory: src/simple-api
     timeout-minutes: 30 
     steps:
       - uses: actions/checkout@v4
@@ -47,8 +47,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: apps/simple-api
-          file: apps/simple-api/Dockerfile
+          context: src/simple-api
+          file: src/simple-api/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
