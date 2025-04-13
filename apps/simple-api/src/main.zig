@@ -55,6 +55,7 @@ pub fn main() !void {
     try server.listen();
 }
 
+// Super useful
 fn greet(app: *App, req: *httpz.Request, res: *httpz.Response) !void {
     _ = app;
 
