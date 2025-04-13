@@ -16,31 +16,7 @@ resource "azurerm_resource_group" "this" {
     location = "westeurope"
 }
 
-resource "time_rotating" "service_principal_key_rotation" {
-    rotation_months = 1
-    lifecycle {
-      create_before_destroy = true
-    }
-}
-
-resource "azuread_application" "this" {
-    display_name = "homelab-sp"
-    owners = [data.azurerm_client_config.current.object_id]
-}
-
-resource "azuread_service_principal" "this" {
-    client_id = azuread_application.this.client_id
-}
-
-resource "azuread_service_principal_password" "this" {
-   service_principal_id =  azuread_service_principal.this.id
-   rotate_when_changed = {
-    rotation = time_rotating.service_principal_key_rotation.id
-   }
-   lifecycle {
-     create_before_destroy = false
-   }
-}
+### Keyvault
 
 resource "azurerm_log_analytics_workspace" "log" {
   name                = module.naming.log_analytics_workspace.name
@@ -64,8 +40,52 @@ resource "azurerm_key_vault" "this" {
   sku_name = "standard"
 }
 
-resource "azurerm_role_assignment" "kv_admin" {
-    role_definition_name = "Key Vault Administrator"
-    principal_id = azuread_service_principal.this.object_id
-    scope = azurerm_key_vault.this.id
+resource "azurerm_key_vault_secret" "deployment_client_id" {
+  key_vault_id = azurerm_key_vault.this.id
+  name = "homelab--config--deploymentClientId"
+  value = azurerm_user_assigned_identity.kubelet_identity.client_id 
+}
+
+resource "azurerm_key_vault_secret" "platform_subscription_id" {
+  key_vault_id = azurerm_key_vault.this.id
+  name = "homelab--config--platformSubscriptionId"
+  value = data.azurerm_client_config.current.subscription_id
+}
+
+resource "azurerm_key_vault_secret" "platform_tenant_id" {
+  key_vault_id = azurerm_key_vault.this.id
+  name = "homelab--config--platformTenantId"
+  value = data.azurerm_client_config.current.tenant_id
+}
+
+resource "azurerm_key_vault_secret" "cluster_oidc_issuer_url" {
+  key_vault_id = azurerm_key_vault.this.id
+  name = "homelab--config--clusterOidcIssuerUrl"
+  value = azurerm_kubernetes_cluster.this.oidc_issuer_url 
+}
+
+### RBAC
+resource "azuread_group" "homelab_management" {
+  display_name = "homelab-management"
+  owners = [
+    data.azurerm_client_config.current.object_id,
+    azurerm_user_assigned_identity.kubelet_identity.principal_id
+  ]
+  members = [
+    data.azurerm_client_config.current.object_id,
+    azurerm_user_assigned_identity.kubelet_identity.principal_id
+  ]
+  security_enabled = true
+}
+
+resource "azurerm_role_assignment" "keyvault_admin" {
+  role_definition_name = "Key Vault Administrator"
+  principal_id = azurerm_user_assigned_identity.kubelet_identity.principal_id
+  scope = azurerm_key_vault.this.id
+}
+
+resource "azurerm_role_assignment" "subscription_owner" {
+  role_definition_name = "Owner"
+  principal_id = azuread_group.homelab_management.object_id 
+  scope = "/subscriptions/${data.azurerm_subscription.current.subscription_id}"
 }
