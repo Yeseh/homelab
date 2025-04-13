@@ -5,9 +5,7 @@ metadata:
   namespace: kro 
 spec:
   interval: 5m
-  chart:
-    spec:
-      chartRef:
-        kind: OCIRepository 
-        name: kro 
-        namespace: flux-system 
+  chartRef:
+    kind: OCIRepository 
+    name: kro 
+    namespace: flux-system 
