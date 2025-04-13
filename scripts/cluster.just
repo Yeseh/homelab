@@ -4,7 +4,7 @@ clusterName := "aks-ydhomelab"
 resourceGroup := "rg-ydhomelab"
 
 login:
-    az aks get-credentials --name {{clusterName}} --resource-group {{resourceGroup}} 
+    az aks get-credentials --name {{clusterName}} --resource-group {{resourceGroup}} --format azure
 
 use: login
     kubectl config use-context {{clusterName}}

@@ -33,9 +33,12 @@ terraform {
       source  = "hashicorp/time"
       version = "=0.12.1"
     }
-    acme = {
-      source  = "vancluever/acme"
-      version = "=2.20.2"
+    github = {
+      source  = "integrations/github"
+      version = ">=5.18.0"
+    }
+    flux = {
+      source = "fluxcd/flux"
     }
   }
 
@@ -69,4 +72,20 @@ provider "kubectl" {
   client_key             = base64decode(azurerm_kubernetes_cluster.this.kube_admin_config.0.client_key)
   cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.this.kube_admin_config.0.cluster_ca_certificate)
   load_config_file       = "false"
+}
+
+provider "flux" {
+  kubernetes = {
+    host                   = azurerm_kubernetes_cluster.this.kube_admin_config.0.host
+    client_certificate     = base64decode(azurerm_kubernetes_cluster.this.kube_admin_config.0.client_certificate)
+    client_key             = base64decode(azurerm_kubernetes_cluster.this.kube_admin_config.0.client_key)
+    cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.this.kube_admin_config.0.cluster_ca_certificate)
+  }
+  git = {
+    url = "ssh://git@github.com/${var.github_org}/${var.github_repo}.git"
+    ssh = {
+      username    = "git"
+      private_key = tls_private_key.flux.private_key_pem
+    }
+  }
 }

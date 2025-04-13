@@ -18,3 +18,21 @@ variable "k8s_vm_sku" {
   description = "The VM type for the system node pool"
   default     = "Standard_D4ads_v5"
 }
+
+variable "github_repo" {
+    type = string
+    description = "Github repository name"
+    default = "homelab"
+}
+
+variable "github_org" {
+    type = string
+    description = "Github org name"
+    default = "yeseh"
+}
+
+variable "github_token" {
+    type = string
+    sensitive = true
+    description = "Github PAT for FluxCD bootstrap"
+}

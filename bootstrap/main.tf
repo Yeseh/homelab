@@ -64,6 +64,12 @@ resource "azurerm_key_vault_secret" "cluster_oidc_issuer_url" {
   value = azurerm_kubernetes_cluster.this.oidc_issuer_url 
 }
 
+resource "azurerm_key_vault_secret" "flux_bootstrap_github_pat" {
+  key_vault_id = azurerm_key_vault.this.id
+  name = "homelab--githubBootstrapPat"
+  value = var.github_token
+}
+
 ### RBAC
 resource "azuread_group" "homelab_management" {
   display_name = "homelab-management"
