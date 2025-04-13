@@ -17,7 +17,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: aso 
-        namespace: azureserviceoperator-system 
+        namespace: flux-system 
       interval: 1m
   values:
     crdPattern: 'resources.azure.com/*;containerservice.azure.com/*;keyvault.azure.com/*;managedidentity.azure.com/*;eventhub.azure.com/*'
