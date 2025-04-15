@@ -27,6 +27,10 @@ spec:
     name: flux-system
   path: ./infrastructure/configs/production
   prune: true
+  postbuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: platform-bootstrap
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
