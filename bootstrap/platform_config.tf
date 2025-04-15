@@ -17,6 +17,12 @@ resource "azurerm_role_assignment" "platform_subscription_owner" {
   principal_id = azurerm_user_assigned_identity.platform_deployment.principal_id
 }
 
+resource "azurerm_role_assignment" "eso_secret_reader" {
+  role_definition_name = "Key Vault Secrets Officer"
+  scope = azurerm_key_vault.this.id 
+  principal_id = azurerm_user_assigned_identity.external_secrets_operator.principal_id
+}
+
 resource "azurerm_federated_identity_credential" "azure_service_operator" {
   name                = azurerm_user_assigned_identity.platform_deployment.name
   resource_group_name = azurerm_user_assigned_identity.platform_deployment.resource_group_name
