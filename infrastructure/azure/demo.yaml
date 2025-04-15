@@ -7,6 +7,6 @@ apiVersion: resources.azure.com/v1api20200601
 kind: ResourceGroup
 metadata:
   name: rg-aso-demo
-  namespace: aso-demo 
+  namespace: platform-system
 spec:
   location: westeurope 
