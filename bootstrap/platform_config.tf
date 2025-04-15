@@ -11,6 +11,12 @@ resource "azurerm_user_assigned_identity" "platform_deployment" {
   location            = azurerm_resource_group.this.location
 }
 
+resource "azurerm_role_assignment" "platform_subscription_owner" {
+  role_definition_name = "Owner"
+  scope = "/subscriptions/${data.azurerm_client_config.current.subscription_id}"
+  principal_id = azurerm_user_assigned_identity.platform_deployment.principal_id
+}
+
 resource "azurerm_federated_identity_credential" "azure_service_operator" {
   name                = azurerm_user_assigned_identity.platform_deployment.name
   resource_group_name = azurerm_user_assigned_identity.platform_deployment.resource_group_name
