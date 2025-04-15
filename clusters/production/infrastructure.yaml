@@ -27,7 +27,7 @@ spec:
     name: flux-system
   path: ./infrastructure/configs/production
   prune: true
-  postbuild:
+  postBuild:
     substituteFrom:
       - kind: ConfigMap
         name: platform-bootstrap
