@@ -26,7 +26,6 @@ spec:
       # subscriptionId: ${schema.spec.subscriptionId}
 
   resources:
-
     - id: resourceGroup
       template:
         apiVersion: resources.azure.com/v1api20200601
@@ -67,8 +66,6 @@ spec:
           labels: 
             toolkit.fluxcd.io/tenant: ${schema.spec.workloadName}-${schema.spec.environment}
 
-
-
     # Create a config map in the canvas namespace that holds the canvas specific information
     - id: configmap
       template:
@@ -106,7 +103,7 @@ spec:
         apiVersion: v1
         kind: ServiceAccount
         metadata: 
-          name: ${configmap.data.serviceAccountName} 
+          name: canvas-identity 
           namespace: ${canvasNamespace.metadata.name}
           annotations:
             azure.workload.identity/client-id: ${identity.status.clientId} 
