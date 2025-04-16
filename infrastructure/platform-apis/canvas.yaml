@@ -15,8 +15,8 @@ spec:
       location: string | required=true
       tenantId: string | required=true
       subscriptionId: string | required=true
-
-    status: {}
+    status: 
+      test: bla
       # deploymentIdentityId: ${identity.status.id}
       # deploymentIdentityClientId: ${identity.status.clientId}
       # keyvaultId: ${keyvault.status.id}
