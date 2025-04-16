@@ -26,31 +26,6 @@ spec:
       # subscriptionId: ${schema.spec.subscriptionId}
 
   resources:
-    # Create the canvas namespace
-    - id: canvasNamespace 
-      template:
-        apiVersion: v1 
-        kind: Namespace
-        metadata:
-          name: canvas-${schema.spec.workloadName}-${schema.spec.environment}
-          labels: 
-            toolkit.fluxcd.io/tenant: ${schema.spec.workloadName}-${schema.spec.environment}
-
-    # Create a config map in the canvas namespace that holds the canvas specific information
-    - id: configmap
-      template:
-        apiVersion: v1
-        kind: ConfigMap
-        metadata:
-          name: canvas-config
-          namespace: ${canvasNamespace.metadata.name}
-          labels: 
-            toolkit.fluxcd.io/tenant: ${schema.spec.workloadName}-${schema.spec.environment}
-        data: 
-          namespace: ${canvasNamespace.metadata.name}
-          serviceAccountName: canvas-identity
-          subscriptionId: ${schema.spec.subscriptionId}
-          tenantId: ${schema.spec.tenantId}
 
     - id: resourceGroup
       template:
@@ -81,19 +56,63 @@ spec:
               clientId:
                 key: clientId 
                 name: canvas-config
+
+    # Create the canvas namespace
+    - id: canvasNamespace 
+      template:
+        apiVersion: v1 
+        kind: Namespace
+        metadata:
+          name: canvas-${schema.spec.workloadName}-${schema.spec.environment}
+          labels: 
+            toolkit.fluxcd.io/tenant: ${schema.spec.workloadName}-${schema.spec.environment}
+
+
+
+    # Create a config map in the canvas namespace that holds the canvas specific information
+    - id: configmap
+      template:
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: canvas-config
+          namespace: ${canvasNamespace.metadata.name}
+          labels: 
+            toolkit.fluxcd.io/tenant: ${schema.spec.workloadName}-${schema.spec.environment}
+        data: 
+          namespace: ${canvasNamespace.metadata.name}
+          serviceAccountName: canvas-identity
+          subscriptionId: ${schema.spec.subscriptionId}
+          tenantId: ${schema.spec.tenantId}
     
+    # Create a namespace-scoped credential for azure service operator
+    # Refers to the canvas managed identity
     - id: asoCredential
       template:
         apiVersion: v1
         kind: Secret
         metadata:
           name: aso-credential
-          namespace: ${platformNamespace} 
+          namespace: ${canvasNamespace.metadata.name} 
         stringData:
           AZURE_SUBSCRIPTION_ID: ${schema.spec.subscriptionId} 
           AZURE_TENANT_ID:    ${schema.spec.tenantId} 
           AZURE_CLIENT_ID:    ${identity.status.clientId} 
 
+    # The service account linked to the deployment identity
+    # Used to enforce tenant separation in fluxcd deployments 
+    - id: serviceAccount 
+      template:
+        apiVersion: v1
+        kind: ServiceAccount
+        metadata: 
+          name: ${configmap.data.serviceAccountName} 
+          namespace: ${canvasNamespace.metadata.name}
+          annotations:
+            azure.workload.identity/client-id: ${identity.status.clientId} 
+            azure.workload.identity/tenant-id: ${schema.spec.tenantId} 
+
+    # Federate the canvas service account with the newly created user assigned identity
     - id: federatedCredential
       template:
         apiVersion: managedidentity.azure.com/v1api20220131preview
@@ -108,19 +127,6 @@ spec:
             name: ${identity.status.id} 
           audiences:
             - api://AzureADTokenExchange
-
-    # The service account linked to the deployment identity
-    # Used to enforce tenant separation in fluxcd deployments 
-    - id: serviceAccount 
-      template:
-        apiVersion: v1
-        kind: ServiceAccount
-        metadata: 
-          name: ${configmap.data.serviceAccountName} 
-          namespace: ${canvasNamespace.metadata.name}
-          annotations:
-            azure.workload.identity/client-id: ${identity.status.clientId} 
-            azure.workload.identity/tenant-id: ${schema.spec.tenantId} 
     
     # This binds the flux reconciliation process for this namespace to the created federated managed identity
     - id: fluxRoleBinding
