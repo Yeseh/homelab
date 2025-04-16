@@ -20,5 +20,6 @@ spec:
   name: web-app
   image: ghcr.io/yeseh/homelab/simple-api:main 
   namespace: aso-demo
+  port: 8080
   ingress:
     enabled: true

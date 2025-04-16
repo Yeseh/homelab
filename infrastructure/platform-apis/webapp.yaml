@@ -39,7 +39,7 @@ spec:
                 - name: ${schema.spec.name}
                   image: ${schema.spec.image}
                   ports:
-                    - containerPort: 80
+                    - containerPort: ${schema.spec.port}
 
     - id: service
       template:
@@ -52,8 +52,8 @@ spec:
           selector: ${deployment.spec.selector.matchLabels} 
           ports:
             - protocol: TCP
-              port: 80
-              targetPort: 80
+              port: ${schema.spec.port} 
+              targetPort: ${schema.spec.port} 
 
     - id: ingress
       includeWhen:
@@ -81,4 +81,4 @@ spec:
                       service:
                         name: ${service.metadata.name} # Use the service name
                         port:
-                          number: 80
+                          number: ${schema.spec.port} 
