@@ -1,6 +1,6 @@
 # Canvas is deployed with the platform identity and resides in the homelab-system namespace
-# It should setup authentication for the canvas identity to take over for follow up resources
-# A canvas roughly translate to an azure subscription, and corresponds to a single namespace
+# It should setup authentication for the canvas identity to take over for workload resources 
+# A canvas corresponds to a single application environment, azure subscription, and namespace in the platform cluster
 apiVersion: kro.run/v1alpha1
 kind: ResourceGraphDefinition
 metadata:
@@ -16,12 +16,12 @@ spec:
       tenantId: string | required=true
       subscriptionId: string | required=true
 
-    status:
+    status: {}
       # deploymentIdentityId: ${identity.status.id}
       # deploymentIdentityClientId: ${identity.status.clientId}
       # keyvaultId: ${keyvault.status.id}
-      tenantId: ${schema.spec.tenantId}
-      subscriptionId: ${schema.spec.subscriptionId}
+      # tenantId: ${schema.spec.tenantId}
+      # subscriptionId: ${schema.spec.subscriptionId}
 
   resources:
     # Create the canvas namespace
