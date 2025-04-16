@@ -25,7 +25,7 @@ spec:
 
   resources:
     # Create the canvas namespace
-    - id: namespace 
+    - id: canvasNamespace 
       template:
         apiVersion: v1 
         kind: Namespace
@@ -39,9 +39,9 @@ spec:
         kind: ConfigMap
         metadata:
           name: canvas-config
-          namespace: ${namespace.metadata.name}
+          namespace: ${canvasNamespace.metadata.name}
         data: 
-          namespace: ${namespace.metadata.name}
+          namespace: ${canvasNamespace.metadata.name}
           serviceAccountName: canvas-identity
           # These should probably come from somewhere else
           # Some default settings/secret!
@@ -54,7 +54,7 @@ spec:
     #     kind: ResourceGroup
     #     metadata:
     #       name: rg-${schema.spec.workloadName}-${schema.spec.environment}
-    #       namespace: ${namespace.metadata.name} 
+    #       namespace: ${canvasNamespace.metadata.name} 
     #     spec:
     #       location: ${schema.spec.location}
 
@@ -64,7 +64,7 @@ spec:
     #     kind: UserAssignedIdentity
     #     metadata:
     #       name: id-${schema.spec.workloadName}-${schema.spec.environment}
-    #       namespace: ${namespace.metadata.name}
+    #       namespace: ${canvasNamespace.metadata.name}
     #     spec:
     #       location: ${resourceGroup.status.location}
     #       owner:
@@ -83,9 +83,9 @@ spec:
     #   kind: FederatedIdentityCredential
     #   metadata:
     #     name: fic-${schema.spec.workloadName}-${schema.spec.environment}-canvas
-    #     namespace: ${namespace.metadata.name} 
+    #     namespace: ${canvasNamespace.metadata.name} 
     #   spec:
-    #     subject: system:serviceaccount:${namespace.metadata.name}:canvas-identity
+    #     subject: system:serviceaccount:${canvasNamespace.metadata.name}:canvas-identity
     #     owner:
     #       name: ${identity.status.id} 
     #     audiences:
@@ -101,7 +101,7 @@ spec:
     #     apiVersion: v1
     #     metadata: 
     #       name: ${configmap.data.serviceAccountName} 
-    #       namespace: ${namespace.metadata.name}
+    #       namespace: ${canvasNamespace.metadata.name}
     #       annotations:
     #         azure.workload.identity/client-id: ${identity.status.clientId} 
     #         azure.workload.identity/tenant-id: ${schema.spec.tenantId} 
