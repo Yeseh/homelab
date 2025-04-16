@@ -9,3 +9,4 @@ spec:
   location: westeurope
   tenantId: ${platformTenantId}
   subscriptionId: ${platformSubscriptionId}
+  oidcIssuer: ${platformClusterOidcIssuer}

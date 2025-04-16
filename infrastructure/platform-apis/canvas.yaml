@@ -15,10 +15,10 @@ spec:
       location: string | required=true
       tenantId: string | required=true
       subscriptionId: string | required=true
+      oidcIssuer: string | required=true
     status: 
       resourceGroupName: ${resourceGroup.status.name}
       azureLocation: ${resourceGroup.status.location}
-      test: bla
       # deploymentIdentityId: ${identity.status.id}
       # deploymentIdentityClientId: ${identity.status.clientId}
       # keyvaultId: ${keyvault.status.id}
@@ -98,13 +98,11 @@ spec:
         namespace: ${canvasNamespace.metadata.name}
       spec:
         subject: system:serviceaccount:${canvasNamespace.metadata.name}:canvas-identity
+        issuer: ${spec.schema.oidcIssuer}
         owner:
           name: ${identity.status.id} 
         audiences:
           - api://AzureADTokenExchange
-        issuerFromConfig:
-          name: platform-bootstrap
-          key: platformClusterOidcIssuer
 
     # The service account linked to the deployment identity
     # Used to enforce tenant separation in fluxcd deployments 
@@ -117,9 +115,6 @@ spec:
           annotations:
             azure.workload.identity/client-id: ${identity.status.clientId} 
             azure.workload.identity/tenant-id: ${schema.spec.tenantId} 
-
-
-
 
 # Keyvault
 # Secret store
