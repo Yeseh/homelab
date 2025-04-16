@@ -25,7 +25,7 @@ spec:
   retryInterval: 1m
   timeout: 5m
   dependsOn:
-    - name: azure-platform 
+    - name: platform-apis 
   sourceRef:
     kind: GitRepository
     name: flux-system
