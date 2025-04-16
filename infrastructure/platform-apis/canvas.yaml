@@ -114,7 +114,7 @@ spec:
     - id: serviceAccount 
       template:
         apiVersion: v1
-        ind: ServiceAccount
+        kind: ServiceAccount
         metadata: 
           name: ${configmap.data.serviceAccountName} 
           namespace: ${canvasNamespace.metadata.name}
