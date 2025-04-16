@@ -18,7 +18,7 @@ metadata:
   namespace: aso-demo 
 spec:
   name: web-app
-  image: nginx:latest
+  image: ghcr.io/yeseh/homelab/simple-api:main 
   namespace: aso-demo
   ingress:
     enabled: true
