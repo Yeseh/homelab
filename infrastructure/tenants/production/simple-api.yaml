@@ -1,0 +1,11 @@
+apiVersion: kro.run/v1alpha1
+kind: Canvas 
+metadata:
+  name: canvas-simple-api 
+  namespace: homelab-system 
+spec:
+  workloadName: hlsimpleapi 
+  environment: dev
+  location: westeurope
+  tenantId: ${platformTenantId}
+  subscriptionId: ${platformSubscriptionId}
