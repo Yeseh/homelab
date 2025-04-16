@@ -60,7 +60,7 @@ spec:
 
     - id: identity 
       template:
-        apiVersion: managedIdentity.azure.com/v1api20230131
+        apiVersion: managedidentity.azure.com/v1api20230131
         kind: UserAssignedIdentity
         metadata:
           name: id-${schema.spec.workloadName}-${schema.spec.environment}
