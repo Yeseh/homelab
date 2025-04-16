@@ -1,0 +1,22 @@
+# This policy is intended to block all service accounts except flux's kustomize controller (IE the platform service account)
+# from deploying ResourceGraphDefinitions
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: block-rgd-except-admin
+spec:
+  validationFailureAction: enforce
+  rules:
+    - name: block-rgd-non-admin
+      match:
+        any:
+        - resources:
+            kinds:
+              - kro.run/v1alpha1/ResourceGraphDefinition
+      validate:
+        message: "Access to ResourceGraphDefinition is restricted."
+        deny: 
+          conditions:
+            - key: "{{request.userInfo.username}}"
+              operator: NotEquals
+              value: "system:serviceaccount:flux-system:kustomize-controller"
