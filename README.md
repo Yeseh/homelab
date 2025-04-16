@@ -4,7 +4,13 @@
 
 My kubernetes homelab.
 
-## Azure platform
+## Features
+
+- Azure infrastructure deployments with Azure Service Operator
+- Azure KeyVault Secret synchronization with external-secrets
+- TODO: Multi Tenant FluxCD
+- TODO: Source control (GitHub) provisioning
+- TODO: Decentralized app networking with Gateway API 
 
 ### Bootstrap
 The bootstrap procedure is responsible for creating the minimal set of azure resources to run fluxcd + azure service operator to deploy azure resources.
@@ -25,9 +31,20 @@ The required information is captured in the following variables:
 - platformSubscriptionId: azure subscription that contains the platform resources
 - platformExternalSecretsServiceAccountName: service account name for the external secrets operator
 
-Above variables are stored in a config map in the platform-system namespace.
+Above variables are stored in a config map in the homelab-system namespace.
 The flux kustomize-controller is then granted access to this config map in order to substitute the config values into the k8s infrastructure configuration.
 
 
+## Tools
 
+- Kubectl
+- Kubecolor
+- Keyverno cli
 
+## Cluster Authorization 
+
+- A flux cd tenant MUST have a service account tied to it
+    - This sa is federated with the azure deployment managed identity
+- Kustomizations/Helmreleases in fluxcd tenants MUST specify a service account 
+- Flux cd tenants MUST not expose kro.run/v1alpha1/ResourceGraphDefinition to consumers
+    - Only instances should be allowed

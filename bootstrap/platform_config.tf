@@ -1,5 +1,5 @@
 locals {
-  platform_namespace = "platform-system"
+  platform_namespace = "homelab-system"
   platform_externalsecrets_sa_name = "externalsecrets-platform"
   aso_subject = "system:serviceaccount:azureserviceoperator-system:azureserviceoperator-default"
   eso_subject = "system:serviceaccount:${local.platform_namespace}:${local.platform_externalsecrets_sa_name}"
@@ -47,13 +47,28 @@ resource "azurerm_federated_identity_credential" "external_secrets_operator" {
   subject             = local.eso_subject 
 }
 
+resource "kubectl_manifest" "platform_namespace" {
+  yaml_body = <<YAML
+    apiVersion: v1 
+    kind: Namespace
+    metadata:
+      name: ${local.platform_namespace} 
+  YAML
+
+  depends_on = [ azurerm_kubernetes_cluster.this ]
+}
+
 resource "kubectl_manifest" "platform_configmap" {
+  # Deploy to flux-system for use in kustomizations
+  # Deploy to homelab-system for use in azure service operator platform resources
+  for_each = toset(["flux-system", local.platform_namespace])
+
   yaml_body = <<YAML
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: platform-bootstrap
-  namespace: flux-system 
+  namespace: ${each.key} 
   labels:
     platform/managed-by: bootstrap
 data:
@@ -64,6 +79,7 @@ data:
   platformExternalSecretsServiceAccountName: "${local.platform_externalsecrets_sa_name}"
   platformExternalSecretsClientId: "${azurerm_user_assigned_identity.external_secrets_operator.client_id}"
   platformDeploymentClientId: "${azurerm_user_assigned_identity.platform_deployment.client_id}"
+  platformClusterOidcIssuer: "${azurerm_kubernetes_cluster.this.oidc_issuer_url}"
 YAML
-  depends_on = [ azurerm_kubernetes_cluster.this ]
+  depends_on = [ kubectl_manifest.platform_namespace ]
 }
