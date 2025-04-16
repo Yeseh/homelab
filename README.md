@@ -1,5 +1,3 @@
-
-
 # Homelab
 
 My kubernetes homelab.
@@ -7,8 +5,8 @@ My kubernetes homelab.
 ## Features
 
 - Azure infrastructure deployments with Azure Service Operator
-- Azure KeyVault Secret synchronization with external-secrets
-- TODO: Multi Tenant FluxCD
+- Azure KeyVault Secret synchronization with external secrets operator
+- TODO: Multi Tenant GitOps with FluxCD
 - TODO: Source control (GitHub) provisioning
 - TODO: Decentralized app networking with Gateway API 
 
@@ -33,7 +31,6 @@ The required information is captured in the following variables:
 
 Above variables are stored in a config map in the homelab-system namespace.
 The flux kustomize-controller is then granted access to this config map in order to substitute the config values into the k8s infrastructure configuration.
-
 
 ## Tools
 
