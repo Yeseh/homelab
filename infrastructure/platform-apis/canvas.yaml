@@ -16,6 +16,8 @@ spec:
       tenantId: string | required=true
       subscriptionId: string | required=true
     status: 
+      resourceGroupName: ${resourceGroup.status.name}
+      azureLocation: ${resourceGroup.status.location}
       test: bla
       # deploymentIdentityId: ${identity.status.id}
       # deploymentIdentityClientId: ${identity.status.clientId}
@@ -46,15 +48,15 @@ spec:
           subscriptionId: ${schema.spec.subscriptionId}
           tenantId: ${schema.spec.tenantId}
 
-    # - id: resourceGroup
-    #   template:
-    #     apiVersion: resources.azure.com/v1api20200601
-    #     kind: ResourceGroup
-    #     metadata:
-    #       name: rg-${schema.spec.workloadName}-${schema.spec.environment}
-    #       namespace: ${canvasNamespace.metadata.name} 
-    #     spec:
-    #       location: ${schema.spec.location}
+    - id: resourceGroup
+      template:
+        apiVersion: resources.azure.com/v1api20200601
+        kind: ResourceGroup
+        metadata:
+          name: rg-${schema.spec.workloadName}-${schema.spec.environment}
+          namespace: ${canvasNamespace.metadata.name} 
+        spec:
+          location: ${schema.spec.location}
 
     # - id: identity 
     #   template:

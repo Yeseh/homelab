@@ -1,5 +1,4 @@
-# This policy is intended to block all service accounts except flux's kustomize controller (IE the platform service account)
-# from deploying ResourceGraphDefinitions
+# This policy is intended to block all service accounts except flux's kustomize controller (IE the platform service account) from deploying ResourceGraphDefinitions
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
