@@ -54,36 +54,36 @@ spec:
         kind: ResourceGroup
         metadata:
           name: rg-${schema.spec.workloadName}-${schema.spec.environment}
-          namespace: ${canvasNamespace.metadata.name} 
+          namespace: homelab-system 
         spec:
           location: ${schema.spec.location}
 
-    # - id: identity 
-    #   template:
-    #     apiVersion: managedIdentity.azure.com/v1api20230131
-    #     kind: UserAssignedIdentity
-    #     metadata:
-    #       name: id-${schema.spec.workloadName}-${schema.spec.environment}
-    #       namespace: ${canvasNamespace.metadata.name}
-    #     spec:
-    #       location: ${resourceGroup.status.location}
-    #       owner:
-    #         name: ${resourceGroup.status.name}
-    #       operatorSpec:
-    #         configMaps:
-    #           principalId:
-    #             key: principalId
-    #             name: canvas-config
-    #           clientId:
-    #             key: clientId 
-    #             name: canvas-config
+    - id: identity 
+      template:
+        apiVersion: managedIdentity.azure.com/v1api20230131
+        kind: UserAssignedIdentity
+        metadata:
+          name: id-${schema.spec.workloadName}-${schema.spec.environment}
+          namespace: homelab-system 
+        spec:
+          location: ${resourceGroup.status.location}
+          owner:
+            name: ${resourceGroup.status.name}
+          operatorSpec:
+            configMaps:
+              principalId:
+                key: principalId
+                name: canvas-config
+              clientId:
+                key: clientId 
+                name: canvas-config
 
     # - id: federatedCredential
     #   apiVersion: managedidentity.azure.com/v1api20220131preview
     #   kind: FederatedIdentityCredential
     #   metadata:
     #     name: fic-${schema.spec.workloadName}-${schema.spec.environment}-canvas
-    #     namespace: ${canvasNamespace.metadata.name} 
+    #     namespace: ${canvasNamespace.metadata.name}
     #   spec:
     #     subject: system:serviceaccount:${canvasNamespace.metadata.name}:canvas-identity
     #     owner:
