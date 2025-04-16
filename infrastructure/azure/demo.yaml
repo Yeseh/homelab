@@ -11,7 +11,7 @@ metadata:
 spec:
   location: westeurope 
 ---
-apiVersion: homelab/v1alpha1
+apiVersion: v1alpha1
 kind: WebApplication 
 metadata:
   name: my-app
