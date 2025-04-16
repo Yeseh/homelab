@@ -1,18 +1,18 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: azure-platform
+  name: platform-apis
   namespace: flux-system
 spec:
   interval: 1h
   dependsOn: 
-    - name: platform-apis 
+    - name: infra-configs 
   retryInterval: 1m
   timeout: 5m
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./infrastructure/azure-platform
+  path: ./infrastructure/platform-apis
   prune: true
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
