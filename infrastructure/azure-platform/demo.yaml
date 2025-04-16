@@ -19,5 +19,6 @@ metadata:
 spec:
   name: web-app
   image: nginx:latest
+  namespace: aso-demo
   ingress:
     enabled: true
