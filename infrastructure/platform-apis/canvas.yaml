@@ -77,34 +77,46 @@ spec:
               clientId:
                 key: clientId 
                 name: canvas-config
+    
+    - id: aso-credential
+      template:
+        apiVersion: v1
+        kind: Secret
+        metadata:
+          name: aso-credential
+          namespace: ${platformNamespace} 
+        stringData:
+          AZURE_SUBSCRIPTION_ID: ${schema.spec.subscriptionId} 
+          AZURE_TENANT_ID:    ${schema.spec.tenantId} 
+          AZURE_CLIENT_ID:    ${identity.status.clientId} 
 
-    # - id: federatedCredential
-    #   apiVersion: managedidentity.azure.com/v1api20220131preview
-    #   kind: FederatedIdentityCredential
-    #   metadata:
-    #     name: fic-${schema.spec.workloadName}-${schema.spec.environment}-canvas
-    #     namespace: ${canvasNamespace.metadata.name}
-    #   spec:
-    #     subject: system:serviceaccount:${canvasNamespace.metadata.name}:canvas-identity
-    #     owner:
-    #       name: ${identity.status.id} 
-    #     audiences:
-    #       - api://AzureADTokenExchange
-    #     issuerFromConfig:
-    #       name: platform-bootstrap
-    #       key: platformClusterOidcIssuer
+    - id: federatedCredential
+      apiVersion: managedidentity.azure.com/v1api20220131preview
+      kind: FederatedIdentityCredential
+      metadata:
+        name: fic-${schema.spec.workloadName}-${schema.spec.environment}-canvas
+        namespace: ${canvasNamespace.metadata.name}
+      spec:
+        subject: system:serviceaccount:${canvasNamespace.metadata.name}:canvas-identity
+        owner:
+          name: ${identity.status.id} 
+        audiences:
+          - api://AzureADTokenExchange
+        issuerFromConfig:
+          name: platform-bootstrap
+          key: platformClusterOidcIssuer
 
-    # # The service account linked to the deployment identity
-    # # Used to enforce tenant separation in fluxcd deployments 
-    # - id: serviceAccount 
-    #   template:
-    #     apiVersion: v1
-    #     metadata: 
-    #       name: ${configmap.data.serviceAccountName} 
-    #       namespace: ${canvasNamespace.metadata.name}
-    #       annotations:
-    #         azure.workload.identity/client-id: ${identity.status.clientId} 
-    #         azure.workload.identity/tenant-id: ${schema.spec.tenantId} 
+    # The service account linked to the deployment identity
+    # Used to enforce tenant separation in fluxcd deployments 
+    - id: serviceAccount 
+      template:
+        apiVersion: v1
+        metadata: 
+          name: ${configmap.data.serviceAccountName} 
+          namespace: ${canvasNamespace.metadata.name}
+          annotations:
+            azure.workload.identity/client-id: ${identity.status.clientId} 
+            azure.workload.identity/tenant-id: ${schema.spec.tenantId} 
 
 
 
