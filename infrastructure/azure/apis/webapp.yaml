@@ -2,7 +2,6 @@ apiVersion: kro.run/v1alpha1
 kind: ResourceGraphDefinition
 metadata:
   name: web-application 
-  namespace: platform-system
 spec:
   schema:
     apiVersion: homelab/v1alpha1
