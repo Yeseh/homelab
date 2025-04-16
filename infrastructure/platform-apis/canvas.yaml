@@ -105,6 +105,8 @@ spec:
         metadata: 
           name: canvas-identity 
           namespace: ${canvasNamespace.metadata.name}
+          labels: 
+            toolkit.fluxcd.io/tenant: ${schema.spec.workloadName}-${schema.spec.environment}
           annotations:
             azure.workload.identity/client-id: ${identity.status.clientId} 
             azure.workload.identity/tenant-id: ${schema.spec.tenantId} 
@@ -119,7 +121,7 @@ spec:
           namespace: ${canvasNamespace.metadata.name}
         spec:
           subject: system:serviceaccount:${canvasNamespace.metadata.name}:canvas-identity
-          issuer: ${spec.schema.oidcIssuer}
+          issuer: ${schema.spec.oidcIssuer}
           owner:
             name: ${identity.status.id} 
           audiences:
@@ -145,9 +147,3 @@ spec:
         - kind: ServiceAccount
           name: ${schema.spec.workloadName}-${schema.spec.environment} 
           namespace: ${canvasNamespace.metadata.name} 
-
-# Keyvault
-# Secret store
-# Managed identity
-# Vnet
-# Subnet
