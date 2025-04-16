@@ -7,15 +7,15 @@ apiVersion: resources.azure.com/v1api20200601
 kind: ResourceGroup
 metadata:
   name: rg-aso-demo
-  namespace: platform-system
+  namespace: aso-demo 
 spec:
   location: westeurope 
 ---
-apiVersion: v1alpha1
+apiVersion: kro.run/v1alpha1
 kind: WebApplication 
 metadata:
   name: my-app
-  namespace: platform-system
+  namespace: aso-demo 
 spec:
   name: web-app
   image: nginx:latest
