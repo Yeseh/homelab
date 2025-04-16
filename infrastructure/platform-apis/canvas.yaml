@@ -82,7 +82,7 @@ spec:
                 key: clientId 
                 name: canvas-config
     
-    - id: aso-credential
+    - id: asoCredential
       template:
         apiVersion: v1
         kind: Secret
@@ -120,6 +120,26 @@ spec:
           annotations:
             azure.workload.identity/client-id: ${identity.status.clientId} 
             azure.workload.identity/tenant-id: ${schema.spec.tenantId} 
+    
+    - id: fluxRoleBinding
+      template:
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: RoleBinding
+        metadata:
+          labels:
+            toolkit.fluxcd.io/tenant: ${schema.spec.workloadName}-${schema.spec.environment} 
+          name: gotk-reconciler
+          namespace: ${canvasNamespace.metadata.name}
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: cluster-admin
+        subjects:
+        - kind: User
+          name: gotk:apps:reconciler
+        - kind: ServiceAccount
+          name: ${schema.spec.workloadName}-${schema.spec.environment} 
+          namespace: ${canvasNamespace.metadata.name} 
 
 # Keyvault
 # Secret store
