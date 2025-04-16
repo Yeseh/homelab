@@ -6,6 +6,7 @@ My kubernetes homelab.
 
 - Azure infrastructure deployments with Azure Service Operator
 - Azure KeyVault Secret synchronization with external secrets operator
+- Platform abstractions with Kube Resource Orchestrator
 - TODO: Multi Tenant GitOps with FluxCD
 - TODO: Source control (GitHub) provisioning
 - TODO: Decentralized app networking with Gateway API 

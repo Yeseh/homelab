@@ -17,9 +17,9 @@ spec:
       subscriptionId: string | required=true
 
     status:
-      deploymentIdentityId: ${identity.status.id}
-      deploymentIdentityClientId: ${identity.status.clientId}
-      keyvaultId: ${keyvault.status.id}
+      # deploymentIdentityId: ${identity.status.id}
+      # deploymentIdentityClientId: ${identity.status.clientId}
+      # keyvaultId: ${keyvault.status.id}
       tenantId: ${schema.spec.tenantId}
       subscriptionId: ${schema.spec.subscriptionId}
 
@@ -43,8 +43,6 @@ spec:
         data: 
           namespace: ${canvasNamespace.metadata.name}
           serviceAccountName: canvas-identity
-          # These should probably come from somewhere else
-          # Some default settings/secret!
           subscriptionId: ${schema.spec.subscriptionId}
           tenantId: ${schema.spec.tenantId}
 
