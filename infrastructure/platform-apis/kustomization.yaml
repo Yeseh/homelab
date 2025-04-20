@@ -3,4 +3,4 @@ kind: Kustomization
 resources:
   - webapp.yaml
   - canvas.yaml
-  - applicaton-base.yaml
+  - application-base.yaml 
