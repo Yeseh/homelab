@@ -20,4 +20,4 @@ spec:
         namespace: flux-system 
       interval: 1m
   values:
-    crdPattern: 'resources.azure.com/*;containerservice.azure.com/*;keyvault.azure.com/*;managedidentity.azure.com/*;eventhub.azure.com/*'
+    crdPattern: 'resources.azure.com/*;containerservice.azure.com/*;keyvault.azure.com/*;managedidentity.azure.com/*;operationalinsights.azure.com/*;authorization.azure.com/*'

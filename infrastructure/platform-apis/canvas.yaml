@@ -36,6 +36,7 @@ spec:
         spec:
           location: ${schema.spec.location}
 
+    # Create a managed identity for the canvas that can be used to deploy resources
     - id: identity 
       template:
         apiVersion: managedidentity.azure.com/v1api20230131
@@ -55,6 +56,19 @@ spec:
               clientId:
                 key: clientId 
                 name: canvas-config
+
+    # Assign the managed identity as the owner of the resource group
+    - id: resourceGroupOwner
+      template:
+        apiVersion: authorization.azure.com/v1api20220401
+        kind: ResourceGroup
+        metadata:
+          name: rg-${schema.spec.workloadName}-${schema.spec.environment}-owner 
+          namespace: homelab-system 
+        spec:
+          principalId: ${identity.status.principalId}
+          roleDefinitionId: 7a0b1c3d-4f2e-4a5b-8f3d-9c6e5f2b1c3d # Owner role
+          scope: ${resourceGroup.status.id}
 
     # Create the canvas namespace
     - id: canvasNamespace 
@@ -147,3 +161,34 @@ spec:
         - kind: ServiceAccount
           name: ${schema.spec.workloadName}-${schema.spec.environment} 
           namespace: ${canvasNamespace.metadata.name} 
+
+    # Setup flux resources to sync the canvas namespace with the git repository
+    - id: flux-repository
+      template:
+        apiVersion: source.toolkit.fluxcd.io/v1
+        kind: GitRepository
+        metadata:
+          name: ${schema.spec.workloadName}-${schema.spec.environment}
+          namespace: ${canvasNamespace.metadata.name}
+        spec:
+          interval: 1m
+          url: https://github.com/yeseh/homelab
+          ref:
+            branch: main
+
+    - id: flux-sync
+      template:
+        apiVersion: kustomize.toolkit.fluxcd.io/v1
+        kind: Kustomization
+        metadata:
+          name: ${schema.spec.workloadName}-${schema.spec.environment}
+          namespace: ${canvasNamespace.metadata.name} 
+        spec:
+          serviceAccountName: canvas-identity 
+          interval: 5m
+          path: ./canvasses/${schema.spec.workloadName}/${schema.spec.environment}
+          sourceRef:
+            kind: GitRepository
+            name: ${schema.spec.workloadName}-${schema.spec.environment}
+            namespace: ${canvasNamespace.metadata.name} 
+          prune: true

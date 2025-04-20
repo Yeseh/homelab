@@ -1,0 +1,29 @@
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata:
+  name: application-base 
+spec:
+  schema:
+    apiVersion: v1alpha1
+    kind: ApplicationBase
+    spec:
+      workloadName: string | required=true
+      environment: string | required=true
+      location: string | required=true
+    status:
+      none: none
+
+  resources:
+    - id: log-workspace 
+      template:
+        apiVersion: operationalinsights.azure.com/v1api20210601
+        kind: Workspace 
+        metadata:
+          name: log-${schema.spec.workloadName}-${schema.spec.environment}
+          namespace: ${schema.spec.workloadName}-${schema.spec.environment}
+        spec:
+          location: ${schema.spec.location}
+          sku:
+            name: PerGB2018
+          owner:
+            name: rg-${schema.spec.workloadName}-${schema.spec.environment}

@@ -1,0 +1,11 @@
+apiVersion: kro.run/v1alpha1
+kind: ApplicationBase 
+metadata:
+  name: application-base 
+  namespace: hlsimpleapi-prd  
+spec:
+  # This is not safe, we can put in anything here
+  # Should be restricted by policy somehow to prevent cross-tenant access
+  workloadName: hlsimpleapi 
+  environment: prd 
+  location: westeurope
