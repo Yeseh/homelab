@@ -5,14 +5,6 @@ using System.Threading.Tasks;
 using ModelContextProtocol.Server;
 
 namespace Homelab.Api.Web;
-
-public record PlatformApiDetail(
-    string Name,
-    string ApiVersion,
-    string Description,
-    string Kind,
-    Dictionary<string, string> Schema
-);
     
 
 [McpServerToolType]
@@ -29,8 +21,14 @@ public class PlatformTool(PlatformClient client)
 
         return summaries;
     }
-    
+
     [McpServerTool(Name = "GetPlatformApi", Destructive = false, ReadOnly = true, Title = "Get Platform API")]
     [Description("Get a detailed view of a single platform API")]
-    public async Task<> GetPlatformApi() 
+    public async Task<PlatformApiDetail> GetPlatformApi(string apiVersion, string name)
+    {
+        var api = await client.GetPlatformApiAsync(apiVersion, name);
+        var summaries = PlatformApiDetail.From(api); 
+
+        return summaries;
+    }
 }

@@ -12,4 +12,12 @@ public class PlatformClient(Kubernetes client)
 
         return rgdList.Items;
     }
+    
+    public async Task<ResourceGraphDefinition> GetPlatformApiAsync(string apiVersion, string name)
+    {
+        var rgd = await client.CustomObjects.GetClusterCustomObjectAsync<ResourceGraphDefinition>(
+            "kro.run", apiVersion, "resourcegraphdefinitions", name);
+
+        return rgd;
+    }
 }

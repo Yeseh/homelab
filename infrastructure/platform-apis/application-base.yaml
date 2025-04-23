@@ -21,7 +21,7 @@ spec:
       none: none
 
   resources:
-    - id: log-workspace 
+    - id: logWorkspace 
       template:
         apiVersion: operationalinsights.azure.com/v1api20210601
         kind: Workspace 

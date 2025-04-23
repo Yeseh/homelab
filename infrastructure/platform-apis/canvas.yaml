@@ -166,7 +166,7 @@ spec:
           namespace: ${canvasNamespace.metadata.name} 
 
     # Setup flux resources to sync the canvas namespace with the git repository
-    - id: flux-repository
+    - id: fluxRepository
       template:
         apiVersion: source.toolkit.fluxcd.io/v1
         kind: GitRepository
@@ -179,7 +179,7 @@ spec:
           ref:
             branch: main
 
-    - id: flux-sync
+    - id: fluxSync
       template:
         apiVersion: kustomize.toolkit.fluxcd.io/v1
         kind: Kustomization
