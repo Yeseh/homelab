@@ -25,7 +25,8 @@ public class Metadata
     public string CreationTimestamp { get; set; }
     public List<string> Finalizers { get; set; }
     public int? Generation { get; set; }
-    public Dictionary<string, string> Labels { get; set; }
+    public Dictionary<string, string> Labels { get; set; } = new();
+    public Dictionary<string, string> Annotations { get; set; } = new();
     public List<ManagedField> ManagedFields { get; set; }
     public string Name { get; set; }
     public string ResourceVersion { get; set; }
