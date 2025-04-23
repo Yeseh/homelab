@@ -1,32 +1,32 @@
-using Microsoft.AspNetCore.Builder;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using k8s;
-using System;
-using Microsoft.AspNetCore.Http.HttpResults;
 using System.Collections.Generic;
+using ModelContextProtocol.Server;
+using System.ComponentModel;
+using System.Linq;
 
-public static class ListPlatformApis
+[McpServerToolType]
+public class PlatformTool
 {
-    public static WebApplication MapListPlatformApis(this WebApplication app)
+    public record PlatformApiSummary(
+        string Name,
+        string ApiVersion,
+        string Kind,
+        string Description
+    );
+
+    [McpServerTool(Name = "ListPlatformApis", Destructive = false, ReadOnly = true, Title = "List Platform APIs")]
+    [Description("Lists all platform infrastructure templates")]
+    public static async Task<List<PlatformApiSummary>> ListPlatformApis(PlatformClient client)
     {
-        app.MapGet("/api/platform-apis", ExecuteAsync);
-        return app;
-    }
+        var apis = await client.ListPlatformApisAsync();
 
-    private static async Task<Ok<List<ResourceGraphDefinition>>> ExecuteAsync()
-    {
-        var config = KubernetesClientConfiguration.BuildDefaultConfig();
-        var client = new Kubernetes(config);
+        var summaries = apis.Select(api => new PlatformApiSummary(
+            api.Metadata.Name,
+            api.ApiVersion,
+            api.Kind,
+            api.Metadata.Labels["homelab.yeseh.nl/llm-description"]
+        )).ToList();
 
-        var rgdList = await client.CustomObjects.ListClusterCustomObjectAsync<ResourceGraphDefinitionList>(
-            "kro.run", "v1alpha1", "resourcegraphdefinitions");
-
-        rgdList.Items.ForEach(rgd =>
-        {
-            Console.WriteLine(rgd.Metadata.Name);
-        });
-
-        return TypedResults.Ok(rgdList.Items);
+        return summaries;
     }
 }
