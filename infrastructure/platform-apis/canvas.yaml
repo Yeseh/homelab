@@ -22,11 +22,11 @@ spec:
     status: 
       resourceGroupName: ${resourceGroup.status.name}
       azureLocation: ${resourceGroup.status.location}
-      # deploymentIdentityId: ${identity.status.id}
-      # deploymentIdentityClientId: ${identity.status.clientId}
+      deploymentIdentityId: ${identity.status.id}
+      deploymentIdentityClientId: ${identity.status.clientId}
+      tenantId: ${schema.spec.tenantId}
+      subscriptionId: ${schema.spec.subscriptionId}
       # keyvaultId: ${keyvault.status.id}
-      # tenantId: ${schema.spec.tenantId}
-      # subscriptionId: ${schema.spec.subscriptionId}
 
   resources:
     - id: resourceGroup
