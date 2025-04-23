@@ -64,7 +64,7 @@ spec:
     - id: resourceGroupOwner
       template:
         apiVersion: authorization.azure.com/v1api20220401
-        kind: ResourceGroup
+        kind: RoleAssignment 
         metadata:
           name: rg-${schema.spec.workloadName}-${schema.spec.environment}-owner 
           namespace: homelab-system 
