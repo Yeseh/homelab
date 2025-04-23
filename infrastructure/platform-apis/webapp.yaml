@@ -3,8 +3,8 @@ kind: ResourceGraphDefinition
 metadata:
   name: cluster-web-application 
   labels: 
-    homelab.yeseh.nl/llm-exposed: true
-    homelab.yeseh.nl/api-category: applications 
+    homelab.yeseh.nl/llm-exposed: "true" 
+    homelab.yeseh.nl/api-category: "applications"
   annotations:
     homelab.yeseh.nl/llm-description: |
       The ClusterWebApplication resource is a Kubernetes resource that defines a web application deployment.

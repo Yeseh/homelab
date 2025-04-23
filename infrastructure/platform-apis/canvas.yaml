@@ -6,8 +6,8 @@ kind: ResourceGraphDefinition
 metadata:
   name: canvas 
   labels: 
-    homelab.yeseh.nl/llm-exposed: false
-    homelab.yeseh.nl/api-category: foundation 
+    homelab.yeseh.nl/llm-exposed: "false"
+    homelab.yeseh.nl/api-category: "foundation"
 spec:
   schema:
     apiVersion: v1alpha1

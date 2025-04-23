@@ -3,8 +3,8 @@ kind: ResourceGraphDefinition
 metadata:
   name: application-base 
   labels: 
-    homelab.yeseh.nl/llm-exposed: true
-    homelab.yeseh.nl/api-category: foundation 
+    homelab.yeseh.nl/llm-exposed: "true"
+    homelab.yeseh.nl/api-category: "foundation" 
   annotations:
     homelab.yeseh.nl/llm-description: |
       The application base is a base resource for all applications. It includes a base set of resources that should always be recommended. 
