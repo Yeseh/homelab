@@ -1,0 +1,66 @@
+# .NET build artifacts
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+
+# Test results
+TestResults/
+
+# Build logs
+*.log
+
+# Auto-generated files
+*.generated.cs
+
+# Others
+*.vspscc
+*.vssscc
+_ReSharper*/
+
+# Local secrets
+*.secret.*
+
+# DotCover
+*.dotCover
+
+# NCrunch
+*.ncrunch*
+.ncrunch*
+
+# Azure Pipelines
+.azure-pipelines/
+
+# JetBrains Rider
+.idea/
+
+# Backup & temp files
+*~
+*.tmp
+*.bak
+
+# NuGet
+*.nupkg
+# Packages folder (legacy)
+packages/
+# NuGet v3
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Publish
+publish/
+
+# Others
+.DS_Store
+Thumbs.db

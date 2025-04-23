@@ -1,0 +1,61 @@
+name: build-platform-api
+on:
+  pull_request:
+  push:
+    paths:
+      - src/platform-api/**
+      - .github/workflows/build-platform-api.yaml
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}-${{ github.actor }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+  packages: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/platform-api/Homelab.Api.Web
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore ../..
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release ../..
+
+      - name: Test
+        run: dotnet test --no-build --configuration Release ../..
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/homelab/platform-api
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: src/platform-api/Homelab.Api.Web
+          file: src/platform-api/Homelab.Api.Web/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
