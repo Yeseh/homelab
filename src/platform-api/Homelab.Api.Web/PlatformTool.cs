@@ -9,7 +9,6 @@ namespace Homelab.Api.Web;
 [McpServerToolType]
 public class PlatformTool(PlatformClient client)
 {
-
     [McpServerTool(Name = "ListPlatformApis", Destructive = false, ReadOnly = true, Title = "List Platform APIs")]
     [Description("Lists all platform infrastructure templates")]
     public async Task<List<PlatformApiSummary>> ListPlatformApis(
@@ -28,8 +27,10 @@ public class PlatformTool(PlatformClient client)
         [Description("The API version of the infrastructure templates")] string apiVersion = "v1alpha1")
     {
         var api = await client.GetPlatformApiAsync(apiVersion, name);
-        var summaries = PlatformApiDetail.From(api); 
+        var detail = PlatformApiDetail.From(api); 
 
-        return summaries;
+        return api is not null 
+            ? PlatformApiDetail.From(api) 
+            : detail;
     }
 }

@@ -5,8 +5,10 @@ My kubernetes homelab.
 ## Features
 
 - Azure infrastructure deployments with Azure Service Operator
-- Azure KeyVault Secret synchronization with external secrets operator
+- Two-way Azure KeyVault Secret synchronization with external secrets operator
 - Platform abstractions with Kube Resource Orchestrator
+- MCP Server to list available platform templates
+- TODO: AI Agent to assist/automate application deployments
 - TODO: Microsoft Entra groups
 - TODO: Multi Tenant GitOps with FluxCD -> https://github.com/fluxcd/flux2-multi-tenancy
 - TODO: Source control (GitHub) provisioning

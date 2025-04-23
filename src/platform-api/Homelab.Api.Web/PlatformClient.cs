@@ -16,10 +16,10 @@ public class PlatformClient(Kubernetes client)
             "resourcegraphdefinitions",
             labelSelector: "homelab.yeseh.nl/llm-exposed=true");
 
-        return rgdList.Items;
+        return rgdList?.Items ?? [];
     }
     
-    public async Task<ResourceGraphDefinition> GetPlatformApiAsync(string apiVersion, string name)
+    public async Task<ResourceGraphDefinition?> GetPlatformApiAsync(string apiVersion, string name)
     {
         var rgd = await client.CustomObjects.GetClusterCustomObjectAsync<ResourceGraphDefinition>(
             "kro.run", apiVersion, "resourcegraphdefinitions", name);
