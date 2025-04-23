@@ -70,7 +70,8 @@ spec:
           namespace: homelab-system 
         spec:
           principalId: ${identity.status.principalId}
-          roleDefinitionReference: "7a0b1c3d-4f2e-4a5b-8f3d-9c6e5f2b1c3d" # Owner role
+          roleDefinitionReference: 
+            ARMID: /subscriptions/cbafd01c-a328-4557-a994-f3179498af36/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635 
           scope: ${resourceGroup.status.id}
 
     # Create the canvas namespace
