@@ -1,11 +1,18 @@
 apiVersion: kro.run/v1alpha1
 kind: ResourceGraphDefinition
 metadata:
-  name: web-application 
+  name: cluster-web-application 
+  labels: 
+    homelab.yeseh.nl/llm-exposed: true
+    homelab.yeseh.nl/api-category: applications 
+  annotations:
+    homelab.yeseh.nl/llm-description: |
+      The ClusterWebApplication resource is a Kubernetes resource that defines a web application deployment.
+      It includes a deployment, service, and optional ingress resource.
 spec:
   schema:
     apiVersion: v1alpha1
-    kind: WebApplication
+    kind: ClusterWebApplication
     spec:
       name: string | required=true
       namespace: string | required=true

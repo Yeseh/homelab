@@ -5,10 +5,10 @@ using k8s;
 
 public class PlatformClient(Kubernetes client)
 {
-    public async Task<List<ResourceGraphDefinition>> ListPlatformApisAsync()
+    public async Task<List<ResourceGraphDefinition>> ListPlatformApisAsync(string apiVersion)
     {
         var rgdList = await client.CustomObjects.ListClusterCustomObjectAsync<ResourceGraphDefinitionList>(
-            "kro.run", "v1alpha1", "resourcegraphdefinitions");
+            "kro.run", apiVersion, "resourcegraphdefinitions", labelSelector: "api-version");
 
         return rgdList.Items;
     }

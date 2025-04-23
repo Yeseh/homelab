@@ -2,6 +2,13 @@ apiVersion: kro.run/v1alpha1
 kind: ResourceGraphDefinition
 metadata:
   name: application-base 
+  labels: 
+    homelab.yeseh.nl/llm-exposed: true
+    homelab.yeseh.nl/api-category: foundation 
+  annotations:
+    homelab.yeseh.nl/llm-description: |
+      The application base is a base resource for all applications. It includes a base set of resources that should always be recommended. 
+      It is essential for monitoring and managing application performance. 
 spec:
   schema:
     apiVersion: v1alpha1

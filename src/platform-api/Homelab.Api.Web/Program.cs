@@ -1,3 +1,4 @@
+using Homelab.Api.Web;
 using k8s;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
