@@ -1,0 +1,27 @@
+apiVersion: kro.run/v1alpha1
+kind: AzureSqlDatabase
+metadata:
+  name: example-sql-database
+  namespace: canvas-simple-api-prd  # This should match an existing canvas namespace
+spec:
+  # Canvas linking - replace with your actual canvas details
+  canvasName: simple-api
+  canvasEnvironment: prd
+  
+  # SQL Server settings
+  serverName: examplesqlserver001
+  location: westeurope
+  administratorLogin: sqladmin
+  # In a real scenario, this should be a reference to a secret
+  administratorLoginPassword: "P@ssw0rd12345!"
+  
+  # Database settings
+  databaseName: exampledb
+  skuName: "Basic"
+  tier: "Basic"
+  maxSizeBytes: 1073741824  # 1GB
+  
+  # Private endpoint settings
+  enablePrivateEndpoint: true
+  # Replace with your actual subnet ID from the virtual network
+  privateEndpointSubnetId: "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}"
