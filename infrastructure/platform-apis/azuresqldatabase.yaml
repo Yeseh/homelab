@@ -42,9 +42,8 @@ spec:
       connectionString: ${sqlServer.status.fullyQualifiedDomainName}
 
   resources:
-    # Reference existing canvas
+    # Get canvas information for reference
     - id: canvas
-      existing: true
       template:
         apiVersion: kro.run/v1alpha1
         kind: Canvas
