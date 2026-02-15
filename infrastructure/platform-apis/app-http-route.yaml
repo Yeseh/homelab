@@ -1,0 +1,104 @@
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata:
+  name: app-http-route
+  labels: 
+    homelab.yeseh.nl/llm-exposed: "true"
+    homelab.yeseh.nl/api-category: "networking"
+  annotations:
+    homelab.yeseh.nl/llm-description: |
+      An application-specific HTTPRoute that connects to a platform-managed Gateway.
+      This resource allows application developers to define routing rules for their services
+      without needing to manage Gateway resources.
+spec:
+  schema:
+    apiVersion: v1alpha2
+    kind: AppHttpRoute
+    spec:
+      name: string | required=true
+      namespace: string | required=true  # Application namespace
+      gatewayRef:
+        name: string | required=true    
+        namespace: string | required=true
+      hostname: string | default=""
+      rules:
+        - path: string | required=true
+          pathType: string | default="PathPrefix" # PathPrefix, Exact, RegularExpression
+          serviceName: string | required=true
+          servicePort: integer | required=true
+          rewrite: boolean | default=false
+          headers:
+            add: map[string]string
+            remove: []string
+          filters:
+            - type: string
+              requestHeaderModifier:
+                add: map[string]string
+                remove: []string
+              responseHeaderModifier:
+                add: map[string]string
+                remove: []string
+    status:
+      routeName: ${httpRoute.metadata.name}
+
+  resources:
+    # Define the HTTPRoute resource for application traffic
+    - id: httpRoute
+      template:
+        apiVersion: gateway.networking.k8s.io/v1
+        kind: HTTPRoute
+        metadata:
+          name: ${schema.spec.name}
+          namespace: ${schema.spec.namespace}
+        spec:
+          parentRefs:
+            - name: ${schema.spec.gatewayRef.name}
+              namespace: ${schema.spec.gatewayRef.namespace} 
+              kind: Gateway
+              group: gateway.networking.k8s.io
+          hostnames:
+            - ${schema.spec.hostname}
+          when: ${schema.spec.hostname && schema.spec.hostname != ""}
+          rules:
+            - matches:
+                - path:
+                    type: ${rule.pathType || "PathPrefix"}
+                    value: ${rule.path}
+              backendRefs:
+                - name: ${rule.serviceName}
+                  port: ${rule.servicePort}
+                  kind: Service
+                  group: ""
+              filters:
+                - type: URLRewrite
+                  urlRewrite:
+                    path:
+                      type: ReplacePrefixMatch
+                      replacePrefixMatch: /
+                  when: ${rule.rewrite === true}
+                - type: RequestHeaderModifier
+                  requestHeaderModifier:
+                    add: ${rule.headers?.add}
+                    remove: ${rule.headers?.remove}
+                  when: ${rule.headers}
+                ${rule.filters}
+              for: rule in schema.spec.rules
+
+    # Create a ReferenceGrant to allow cross-namespace reference to the Gateway
+    - id: referenceGrant
+      template:
+        apiVersion: gateway.networking.k8s.io/v1beta1
+        kind: ReferenceGrant
+        metadata:
+          name: allow-${schema.spec.name}-to-${schema.spec.gatewayRef.name}
+          namespace: ${schema.spec.gatewayRef.namespace}
+        spec:
+          from:
+            - group: gateway.networking.k8s.io
+              kind: HTTPRoute
+              namespace: ${schema.spec.namespace}
+          to:
+            - group: gateway.networking.k8s.io
+              kind: Gateway
+              name: ${schema.spec.gatewayRef.name}
+      when: ${schema.spec.namespace != schema.spec.gatewayRef.namespace}
