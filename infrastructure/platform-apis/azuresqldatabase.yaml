@@ -1,0 +1,128 @@
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata:
+  name: azure-sql-database
+  labels:
+    homelab.yeseh.nl/llm-exposed: "true"
+    homelab.yeseh.nl/api-category: "databases"
+  annotations:
+    homelab.yeseh.nl/llm-description: |
+      The AzureSqlDatabase resource allows you to create an Azure SQL Database with a private endpoint.
+      It links to an existing Canvas for permissions and networking.
+spec:
+  schema:
+    apiVersion: v1alpha1
+    kind: AzureSqlDatabase
+    spec:
+      # Canvas linking
+      canvasName: string | required=true
+      canvasEnvironment: string | required=true
+      
+      # SQL Server settings
+      serverName: string | required=true
+      location: string | required=true
+      administratorLogin: string | required=true
+      administratorLoginPassword: string | required=true
+      
+      # Database settings
+      databaseName: string | required=true
+      skuName: string | default="Basic"
+      tier: string | default="Basic"
+      maxSizeBytes: integer | default=1073741824 # 1GB
+      
+      # Private endpoint settings
+      enablePrivateEndpoint: boolean | default=true
+      privateEndpointSubnetId: string | required=true
+      
+    status:
+      serverResourceId: ${sqlServer.status.id}
+      databaseResourceId: ${sqlDatabase.status.id}
+      privateEndpointResourceId: ${privateEndpoint.status.id}
+      fqdn: ${sqlServer.status.fullyQualifiedDomainName}
+      connectionString: ${sqlServer.status.fullyQualifiedDomainName}
+
+  resources:
+    # Get canvas information for reference
+    - id: canvas
+      template:
+        apiVersion: kro.run/v1alpha1
+        kind: Canvas
+        metadata:
+          name: canvas-${schema.spec.canvasName}-${schema.spec.canvasEnvironment}
+          namespace: homelab-system
+      
+    # Create SQL server
+    - id: sqlServer
+      template:
+        apiVersion: sql.azure.com/v1api20201101preview
+        kind: Server
+        metadata:
+          name: ${schema.spec.serverName}
+          namespace: canvas-${schema.spec.canvasName}-${schema.spec.canvasEnvironment}
+        spec:
+          location: ${schema.spec.location}
+          properties:
+            administratorLogin: ${schema.spec.administratorLogin}
+            administratorLoginPassword: ${schema.spec.administratorLoginPassword}
+            version: "12.0"
+            minimalTlsVersion: "1.2"
+            publicNetworkAccess: "Disabled"
+          owner:
+            name: ${canvas.status.resourceGroupName}
+    
+    # Create SQL database
+    - id: sqlDatabase
+      template:
+        apiVersion: sql.azure.com/v1api20201101preview
+        kind: Database
+        metadata:
+          name: ${schema.spec.databaseName}
+          namespace: canvas-${schema.spec.canvasName}-${schema.spec.canvasEnvironment}
+        spec:
+          location: ${schema.spec.location}
+          properties:
+            maxSizeBytes: ${schema.spec.maxSizeBytes}
+            sku:
+              name: ${schema.spec.skuName}
+              tier: ${schema.spec.tier}
+          owner:
+            name: ${sqlServer.status.name}
+    
+    # Create private endpoint
+    - id: privateEndpoint
+      includeWhen:
+        - ${schema.spec.enablePrivateEndpoint}
+      template:
+        apiVersion: network.azure.com/v1api20220701
+        kind: PrivateEndpoint
+        metadata:
+          name: pe-${schema.spec.serverName}
+          namespace: canvas-${schema.spec.canvasName}-${schema.spec.canvasEnvironment}
+        spec:
+          location: ${schema.spec.location}
+          properties:
+            privateLinkServiceConnections:
+              - name: sqlserver-connection
+                properties:
+                  privateLinkServiceId: ${sqlServer.status.id}
+                  groupIds:
+                    - "sqlServer"
+            subnet:
+              id: ${schema.spec.privateEndpointSubnetId}
+          owner:
+            name: ${canvas.status.resourceGroupName}
+
+    # Assign permissions to the canvas managed identity for the SQL server
+    - id: sqlServerRoleAssignment
+      template:
+        apiVersion: authorization.azure.com/v1api20220401
+        kind: RoleAssignment
+        metadata:
+          name: role-${schema.spec.serverName}-${schema.spec.databaseName}-contributor
+          namespace: canvas-${schema.spec.canvasName}-${schema.spec.canvasEnvironment}
+        spec:
+          principalId: ${canvas.status.deploymentIdentityId}
+          owner:
+            armId: ${sqlServer.status.id}
+          roleDefinitionReference:
+            armId: /subscriptions/${canvas.status.subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c # Contributor role
